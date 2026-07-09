@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node --watch server.js",
-    "seed": "node public/scripts/seedAdmin.js"
+    "seed": "node public/scripts/seedAdmin.js",
+    "vercel": "node api/index.js"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",

@@ -3,7 +3,7 @@ const User = require('../../models/User');
 const Department = require('../../models/Department');
 const Assignment = require('../../models/Assignment');
 const Notification = require('../../models/Notification');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 require('dotenv').config({ override: true });
 
 const seedAdmin = async () => {

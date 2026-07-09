@@ -1,6 +1,6 @@
 const { connectDB } = require('./config/db');
 const User = require('./models/User');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 
 const updateStudent = async () => {
   await connectDB();

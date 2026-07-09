@@ -64,10 +64,40 @@
               Sign In
             </button>
           </form>
+
+          <!-- Demo Credentials Section -->
+          <div class="demo-credentials" style="margin-top: 24px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
+            <p style="font-size: 13px; color: rgba(255,255,255,0.6); margin-bottom: 12px; text-align: center; font-weight: 500;">Quick Demo Login (Click to Autofill):</p>
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;">
+              <button type="button" class="btn-demo-autofill" onclick="autofill('admin@university.edu', 'Admin@123')">
+                <strong style="color: #6366f1; display: block; font-size: 10px; text-transform: uppercase; margin-bottom: 2px;">Admin</strong>
+                admin@university.edu
+              </button>
+              <button type="button" class="btn-demo-autofill" onclick="autofill('student1@university.edu', 'StudentPassword123')">
+                <strong style="color: #10b981; display: block; font-size: 10px; text-transform: uppercase; margin-bottom: 2px;">Student</strong>
+                student1@university.edu
+              </button>
+              <button type="button" class="btn-demo-autofill" onclick="autofill('professor@university.edu', 'Professor@123')">
+                <strong style="color: #f59e0b; display: block; font-size: 10px; text-transform: uppercase; margin-bottom: 2px;">Professor</strong>
+                professor@university.edu
+              </button>
+              <button type="button" class="btn-demo-autofill" onclick="autofill('hod@university.edu', 'Hod@123')">
+                <strong style="color: #ec4899; display: block; font-size: 10px; text-transform: uppercase; margin-bottom: 2px;">HOD</strong>
+                hod@university.edu
+              </button>
+            </div>
+          </div>
     </div>
   </div>
 
+
+
   <script>
+    function autofill(email, password) {
+      document.getElementById('email').value = email;
+      document.getElementById('password').value = password;
+    }
+
     document.querySelectorAll('.input-toggle').forEach(button => {
       button.addEventListener('click', () => {
         const wrapper = button.closest('.input-wrapper');

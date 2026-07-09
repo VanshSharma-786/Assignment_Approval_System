@@ -1146,3 +1146,27 @@ textarea.form-input {
 .input-wrapper.has-toggle .form-input {
   padding-right: 44px;
 }
+
+/* Quick Demo Login Credentials */
+.btn-demo-autofill {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.6);
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 10px;
+  text-align: left;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+.btn-demo-autofill:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+.btn-demo-autofill:active {
+  transform: translateY(0);
+}

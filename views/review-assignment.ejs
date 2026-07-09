@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Review Assignment | Professor Portal</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .review-header-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .review-header-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .review-header-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      letter-spacing: 0.5px;
+    }
+
+    .review-header-value {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .review-split-grid {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .review-sidebar-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 24px;
+    }
+
+    .review-sidebar-label {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+    }
+
+    .review-sidebar-value {
+      font-size: 14px;
+      color: var(--text-main);
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+
+    .review-sidebar-divider {
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 20px;
+    }
+
+    .signature-toggle-container {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .signature-toggle-btn {
+      flex: 1;
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+      background: var(--bg-card);
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .signature-toggle-btn.active {
+      background-color: var(--primary);
+      color: var(--text-inverse);
+      border-color: var(--primary);
+    }
+
+    .review-action-buttons {
+      display: flex;
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .btn-approve-action {
+      flex: 1;
+      background-color: hsl(142, 70%, 45%);
+      color: var(--text-inverse);
+      border: none;
+      padding: 12px;
+      border-radius: var(--radius-sm);
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: 14px;
+    }
+
+    .btn-reject-action {
+      flex: 1;
+      background-color: hsl(0, 80%, 50%);
+      color: var(--text-inverse);
+      border: none;
+      padding: 12px;
+      border-radius: var(--radius-sm);
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="admin-layout">
+    <header class="admin-header-bar">
+      <a href="/professor/dashboard" class="admin-logo-title" style="color: inherit;">Professor Portal</a>
+      <div class="navbar-menu" style="margin: 0;">
+        <div class="user-profile">
+          <div class="user-avatar" id="avatar-display">
+            <%= user.role==='professor' ? 'P' : (user.role === 'hod' ? 'H' : user.name.charAt(0).toUpperCase()) %>
+          </div>
+          <span>
+            <%= user.email %>
+          </span>
+        </div>
+        <form action="/auth/logout" method="GET" style="margin: 0;">
+          <button type="submit" class="btn-logout" id="logout-btn">Sign Out</button>
+        </form>
+      </div>
+    </header>
+
+    <div class="admin-container">
+      <aside class="admin-sidebar">
+        <h2 class="sidebar-title">Navigation</h2>
+        <nav class="sidebar-menu">
+          <a href="/professor/dashboard" class="sidebar-link"
+            style="background-color: var(--primary); color: var(--text-inverse);">Dashboard</a>
+          <a href="/professor/reviews" class="sidebar-link">My Reviews</a>
+          <a href="/professor/profile" class="sidebar-link">Profile</a>
+        </nav>
+      </aside>
+
+      <main class="admin-content">
+        <a href="/professor/dashboard" class="btn-secondary-outline"
+          style="display: inline-flex; align-items: center; gap: 8px; margin-bottom: 24px; max-width: fit-content;">
+          &larr; Back to Dashboard
+        </a>
+
+        <header class="dashboard-header" style="margin-bottom: 24px;">
+          <h2 class="dashboard-title" style="font-size: 22px; margin: 0;">Review Assignment</h2>
+        </header>
+
+        <% if (error) { %>
+          <div class="alert alert-danger"
+            style="margin-bottom: 24px; padding: 12px 16px; background-color: var(--error-bg); border-left: 4px solid var(--error-text); color: var(--error-text); border-radius: var(--radius-sm); font-size: 14px;">
+            <strong>Error:</strong>
+            <%= error %>
+          </div>
+          <% } %>
+
+            <div class="review-header-grid">
+              <div class="review-header-card">
+                <div class="review-header-label">Student Name</div>
+                <div class="review-header-value">
+                  <%= assignment.student ? assignment.student.name : 'Unknown Student' %>
+                </div>
+              </div>
+              <div class="review-header-card">
+                <div class="review-header-label">Assignment Title</div>
+                <div class="review-header-value">
+                  <%= assignment.title %>
+                </div>
+              </div>
+              <div class="review-header-card">
+                <div class="review-header-label">Status</div>
+                <span class="badge badge-<%= assignment.status.toLowerCase() %>"
+                  style="display: inline-flex; font-size: 13px; font-weight: 600; width: 90px; justify-content: center;">
+                  <%= assignment.status %>
+                </span>
+              </div>
+              <div class="review-header-card">
+                <div class="review-header-label">Submitted On</div>
+                <div class="review-header-value">
+                  <%= new Date(assignment.updatedAt || assignment.createdAt).toLocaleDateString(undefined, {
+                    day: 'numeric' , month: 'short' , year: 'numeric' }) %>
+                </div>
+              </div>
+            </div>
+
+            <% const courses={ 'DBMS Project' : 'BE-CSE Database Management Systems' , 'OS Case Study'
+              : 'BE-CSE Operating Systems' , 'Web Demo' : 'BE-CSE Web Technologies' , 'Algo Worksheet'
+              : 'BE-CSE Analysis & Design of Algorithms' , 'Linux Lab' : 'BE-CSE Advanced Linux Administration' }; const
+              resolvedCourse=courses[assignment.title] || 'BE-CSE Computer Science Engineering' ; const
+              dueDateString=new Date(new Date(assignment.createdAt).getTime() + 6 * 24 * 60 * 60 *
+              1000).toLocaleDateString(undefined, { day: 'numeric' , month: 'short' , year: 'numeric' }); %>
+
+              <div class="review-split-grid">
+                <div>
+                  <div class="review-sidebar-card">
+                    <div class="review-sidebar-label">Description</div>
+                    <div class="review-sidebar-value" style="font-size: 13px;">
+                      <%= assignment.description || 'No description provided.' %>
+                    </div>
+                    <div class="review-sidebar-divider"></div>
+
+                    <div class="review-sidebar-label">Course</div>
+                    <div class="review-sidebar-value" style="font-size: 13px;">
+                      <%= resolvedCourse %>
+                    </div>
+                    <div class="review-sidebar-divider"></div>
+
+                    <div class="review-sidebar-label">Due Date</div>
+                    <div class="review-sidebar-value" style="font-size: 13px;">
+                      <%= dueDateString %>
+                    </div>
+                    <div class="review-sidebar-divider"></div>
+
+                    <div class="review-sidebar-label">Submission File</div>
+                    <div class="review-sidebar-value" style="margin-bottom: 0;">
+                      <a href="/student/assignments/<%= assignment.id %>/download"
+                        style="display: flex; align-items: center; gap: 8px; font-size: 13px; text-decoration: underline; color: var(--primary); font-weight: 600;">
+                        <span style="font-size: 18px;">📄</span>
+                        <span>
+                          <%= assignment.filePath ? assignment.filePath.split(/[\\/]/).pop() : 'Attachment.pdf' %>
+                        </span>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="timeline-card" style="margin-top: 0; padding: 24px; margin-bottom: 24px;">
+                    <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 16px; color: var(--text-main);">
+                      Assignment File Preview</h3>
+                    <% if (assignment.filePath) { %>
+                      <iframe src="<%= assignment.filePath %>"
+                        style="width: 100%; height: 420px; border: 1px solid var(--border-color); border-radius: var(--radius-sm);"></iframe>
+                      <% } else { %>
+                        <div
+                          style="background-color: var(--bg-card); padding: 40px; text-align: center; border: 1px dashed var(--border-color); color: var(--text-muted);">
+                          No preview available.
+                        </div>
+                        <% } %>
+                  </div>
+
+                  <div class="timeline-card" style="padding: 24px;">
+                    <form id="reviewActionForm" method="POST" enctype="multipart/form-data">
+                      <div style="margin-bottom: 20px;">
+                        <label for="remarks"
+                          style="display: block; font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px;">Remarks</label>
+                        <textarea id="remarks" name="remarks" class="form-textarea"
+                          style="width: 100%; min-height: 100px;" placeholder="Enter remarks for student..."
+                          required></textarea>
+                      </div>
+
+                      <div style="margin-bottom: 20px;">
+                        <label
+                          style="display: block; font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px;">Upload
+                          Signature</label>
+
+                        <div class="signature-toggle-container">
+                          <button type="button" class="signature-toggle-btn active" id="btn-sig-image">Upload
+                            Image</button>
+                          <button type="button" class="signature-toggle-btn" id="btn-sig-text">Use Text Name</button>
+                        </div>
+
+                        <input type="hidden" name="signatureType" id="signatureType" value="image">
+
+                        <div id="sig-image-container">
+                          <input type="file" id="signatureFile" name="signatureFile" accept="image/*"
+                            class="form-control" style="width: 100%; padding: 8px;">
+                          <p style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Choose a clean png/jpg
+                            image of your signature.</p>
+                        </div>
+
+                        <div id="sig-text-container" style="display: none;">
+                          <input type="text" id="signatureText" name="signatureText" class="form-control"
+                            style="width: 100%; height: 38px;" value="Dr. <%= user.name %>">
+                          <p style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Type your name. It will
+                            be converted to a secure digital hash.</p>
+                        </div>
+                      </div>
+
+                      <div class="review-action-buttons">
+                        <button type="submit" formaction="/professor/assignments/<%= assignment.id %>/approve"
+                          class="btn-approve-action">✓ Approve Assignment</button>
+                        <button type="submit" formaction="/professor/assignments/<%= assignment.id %>/reject"
+                          class="btn-reject-action"
+                          onclick="const remarksVal = document.getElementById('remarks').value; if (remarksVal.trim().length < 10) { alert('Rejection remarks must be at least 10 characters long.'); return false; } return confirm('Are you sure you want to reject this assignment? This will return the assignment to the student dashboard for resubmission.');">✗
+                          Reject Assignment</button>
+                      </div>
+                    </form>
+                  </div>
+
+                  <div class="timeline-card" style="padding: 24px; margin-top: 24px;">
+                    <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 16px; color: var(--text-main);">
+                      Forward to Another Reviewer</h3>
+                    
+                    <% if (locals.reviewers && reviewers.length > 0) { %>
+                      <form id="forwardActionForm" action="/professor/assignments/<%= assignment.id %>/forward" method="POST">
+                        <div style="margin-bottom: 20px;">
+                          <label for="recipientId"
+                            style="display: block; font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px;">Select Recipient</label>
+                          <select name="recipientId" id="recipientId" class="form-select" style="width: 100%; height: 38px;" required>
+                            <option value="" disabled selected>Select professor or HOD...</option>
+                            <% reviewers.forEach(r => { %>
+                              <option value="<%= r.id %>"><%= r.name %> (<%= r.role.toUpperCase() %> - <%= r.email %>)</option>
+                            <% }); %>
+                          </select>
+                        </div>
+
+                        <div style="margin-bottom: 20px;">
+                          <label for="forwardingNote"
+                            style="display: block; font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px;">Forwarding Note</label>
+                          <textarea id="forwardingNote" name="forwardingNote" class="form-textarea"
+                            style="width: 100%; min-height: 80px;" placeholder="Add forwarding details or reasons..."
+                            required></textarea>
+                        </div>
+
+                        <button type="submit" class="btn-upload" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                          <span>➜</span> Forward Assignment
+                        </button>
+                      </form>
+                    <% } else { %>
+                      <p style="color: var(--text-muted); font-size: 13px; margin: 0;">
+                        No other professors or HODs are available in your department to forward this assignment to.
+                      </p>
+                    <% } %>
+                  </div>
+                </div>
+              </div>
+      </main>
+    </div>
+
+    <footer class="admin-footer">
+      <p>&copy; 2025 Professor Portal. All rights reserved.</p>
+    </footer>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const btnSigImage = document.getElementById('btn-sig-image');
+      const btnSigText = document.getElementById('btn-sig-text');
+      const signatureType = document.getElementById('signatureType');
+
+      const sigImageContainer = document.getElementById('sig-image-container');
+      const sigTextContainer = document.getElementById('sig-text-container');
+
+      const signatureFile = document.getElementById('signatureFile');
+      const signatureText = document.getElementById('signatureText');
+
+      btnSigImage.addEventListener('click', () => {
+        btnSigImage.classList.add('active');
+        btnSigText.classList.remove('active');
+        signatureType.value = 'image';
+        sigImageContainer.style.display = 'block';
+        sigTextContainer.style.display = 'none';
+        signatureFile.setAttribute('required', 'required');
+        signatureText.removeAttribute('required');
+      });
+
+      btnSigText.addEventListener('click', () => {
+        btnSigText.classList.add('active');
+        btnSigImage.classList.remove('active');
+        signatureType.value = 'text';
+        sigImageContainer.style.display = 'none';
+        sigTextContainer.style.display = 'block';
+        signatureText.setAttribute('required', 'required');
+        signatureFile.removeAttribute('required');
+      });
+
+      // Default required mapping
+      signatureFile.setAttribute('required', 'required');
+      signatureText.removeAttribute('required');
+    });
+  </script>
+</body>
+
+</html>

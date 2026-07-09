@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bulk Upload Summary | Student Portal</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="admin-layout">
+    <header class="admin-header-bar">
+      <a href="/student/dashboard" class="admin-logo-title" style="color: inherit;">Student Portal</a>
+      <div class="navbar-menu" style="margin: 0;">
+        <div class="user-profile">
+          <div class="user-avatar" id="avatar-display">
+            <%= user.name.charAt(0).toUpperCase() %>
+          </div>
+          <span><%= user.email %></span>
+        </div>
+        <form action="/auth/logout" method="GET" style="margin: 0;">
+          <button type="submit" class="btn-logout" id="logout-btn">Sign Out</button>
+        </form>
+      </div>
+    </header>
+
+    <div class="admin-container">
+      <aside class="admin-sidebar">
+        <h2 class="sidebar-title">Navigation</h2>
+        <nav class="sidebar-menu">
+          <a href="/student/dashboard" class="sidebar-link">Dashboard</a>
+          <a href="/student/assignments" class="sidebar-link">All Assignments</a>
+          <a href="/student/profile" class="sidebar-link">Profile</a>
+        </nav>
+      </aside>
+
+      <main class="admin-content">
+        <header class="dashboard-header" style="margin-bottom: 24px;">
+          <h2 class="dashboard-title" style="font-size: 22px;">Bulk Upload Summary</h2>
+        </header>
+
+        <div class="alert alert-success" style="margin-bottom: 32px; padding: 16px; background-color: hsla(150, 80%, 95%, 0.9); border-left: 4px solid hsl(150, 80%, 40%); color: hsl(150, 80%, 25%); border-radius: var(--radius-md);">
+          <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 4px;">Bulk Upload Successful!</h3>
+          <p style="margin: 0; font-size: 14px;">Created <strong><%= summary.assignments.length %></strong> new draft assignment records in the database.</p>
+        </div>
+
+        <div class="summary-details" style="background-color: var(--card-bg); padding: 24px; border-radius: var(--radius-lg); border: 1px solid var(--border-color); margin-bottom: 32px; box-shadow: var(--shadow-sm);">
+          <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 16px; color: var(--text-main); border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">Upload Group Details</h3>
+          <div style="display: grid; grid-template-columns: 150px 1fr; gap: 12px; font-size: 15px; margin-bottom: 8px;">
+            <div style="font-weight: 600; color: var(--text-muted);">Category:</div>
+            <div style="color: var(--text-main);"><%= summary.category %></div>
+          </div>
+          <div style="display: grid; grid-template-columns: 150px 1fr; gap: 12px; font-size: 15px;">
+            <div style="font-weight: 600; color: var(--text-muted);">Common Notes:</div>
+            <div style="color: var(--text-main); white-space: pre-wrap;"><%= summary.description %></div>
+          </div>
+        </div>
+
+        <h3 style="font-size: 18px; font-weight: 600; margin: 32px 0 16px; color: var(--text-main);">Created Records</h3>
+
+        <div class="table-container" style="margin-bottom: 32px;">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th style="width: 80px;">ID</th>
+                <th>Assignment Title</th>
+                <th>File Reference</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% summary.assignments.forEach(a => { %>
+                <tr>
+                  <td><%= a.id %></td>
+                  <td style="font-weight: 600;"><%= a.title %></td>
+                  <td>
+                    <a href="<%= a.filePath %>" target="_blank" style="color: var(--primary); text-decoration: none; font-weight: 500;">Download PDF</a>
+                  </td>
+                  <td>
+                    <span class="badge badge-draft" style="display: inline-flex; justify-content: center; width: 90px; text-align: center;"><%= a.status %></span>
+                  </td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+
+        <div>
+          <a href="/student/dashboard" class="btn-upload">Back to Dashboard</a>
+        </div>
+      </main>
+    </div>
+
+    <footer class="admin-footer">
+      <p>&copy; 2025 Student Portal. All rights reserved.</p>
+    </footer>
+  </div>
+</body>
+</html>

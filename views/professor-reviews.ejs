@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Reviews | Professor Portal</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="admin-layout">
+    <header class="admin-header-bar">
+      <a href="/professor/dashboard" class="admin-logo-title" style="color: inherit;">Professor Portal</a>
+      <div class="navbar-menu" style="margin: 0;">
+        <div class="user-profile">
+          <div class="user-avatar" id="avatar-display">
+            <%= user.role === 'professor' ? 'P' : (user.role === 'hod' ? 'H' : user.name.charAt(0).toUpperCase()) %>
+          </div>
+          <span><%= user.email %></span>
+        </div>
+        <form action="/auth/logout" method="GET" style="margin: 0;">
+          <button type="submit" class="btn-logout" id="logout-btn">Sign Out</button>
+        </form>
+      </div>
+    </header>
+
+    <div class="admin-container">
+      <aside class="admin-sidebar">
+        <h2 class="sidebar-title">Navigation</h2>
+        <nav class="sidebar-menu">
+          <a href="/professor/dashboard" class="sidebar-link">Dashboard</a>
+          <a href="/professor/reviews" class="sidebar-link" style="background-color: var(--primary); color: var(--text-inverse);">My Reviews</a>
+          <a href="/professor/profile" class="sidebar-link">Profile</a>
+        </nav>
+      </aside>
+
+      <main class="admin-content">
+        <header class="dashboard-header" style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center;">
+          <h2 class="dashboard-title" style="font-size: 22px; margin: 0;">My Reviews</h2>
+          
+          <div style="display: flex; gap: 12px; align-items: center;">
+            <label for="statusFilter" style="font-size: 13px; font-weight: 600; color: var(--text-muted);">Filter Status:</label>
+            <select id="statusFilter" class="form-select" style="width: 140px; height: 36px; padding: 4px 8px; font-size: 13px;">
+              <option value="all">All Statuses</option>
+              <option value="submitted">Submitted</option>
+              <option value="approved">Approved</option>
+              <option value="rejected">Rejected</option>
+            </select>
+          </div>
+        </header>
+
+        <div class="timeline-card" style="margin-top: 0; padding: 0; overflow: hidden;">
+          <table class="admin-table" id="reviewsTable" style="margin: 0;">
+            <thead>
+              <tr>
+                <th style="cursor: pointer;" onclick="sortTable(0)">Assignment Title <span>⇅</span></th>
+                <th style="cursor: pointer;" onclick="sortTable(1)">Student Name <span>⇅</span></th>
+                <th style="cursor: pointer;" onclick="sortTable(2)">Category <span>⇅</span></th>
+                <th style="cursor: pointer;" onclick="sortTable(3)">Status <span>⇅</span></th>
+                <th style="cursor: pointer;" onclick="sortTable(4)">Date <span>⇅</span></th>
+                <th style="text-align: right;">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (assignments.length === 0) { %>
+                <tr>
+                  <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 32px;">
+                    No reviews found.
+                  </td>
+                </tr>
+              <% } else { %>
+                <% assignments.forEach(a => { %>
+                  <tr class="review-row" data-status="<%= a.status.toLowerCase() %>">
+                    <td>
+                      <div style="font-weight: 600; color: var(--text-main);"><%= a.title %></div>
+                    </td>
+                    <td><%= a.student ? a.student.name : 'Unknown' %></td>
+                    <td><%= a.category %></td>
+                    <td>
+                      <span class="badge badge-<%= a.status.toLowerCase() %>" style="display: inline-flex; width: 90px; justify-content: center;"><%= a.status %></span>
+                    </td>
+                    <td data-date="<%= new Date(a.updatedAt || a.createdAt).getTime() %>">
+                      <%= new Date(a.updatedAt || a.createdAt).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' }) %>
+                    </td>
+                    <td style="text-align: right;">
+                      <div style="display: inline-flex; gap: 8px; justify-content: flex-end;">
+                        <% if (a.status.toLowerCase() === 'submitted') { %>
+                          <a href="/professor/assignments/<%= a.id %>/review" class="btn-upload" style="margin: 0; padding: 6px 12px; font-size: 12px; font-weight: 600; border-radius: var(--radius-sm);">Review</a>
+                        <% } %>
+                        <a href="/professor/assignments/<%= a.id %>" class="btn-secondary-outline" style="margin: 0; padding: 6px 12px; font-size: 12px; font-weight: 600; border-radius: var(--radius-sm);">Details</a>
+                      </div>
+                    </td>
+                  </tr>
+                <% }); %>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+
+    <footer class="admin-footer">
+      <p>&copy; 2025 Professor Portal. All rights reserved.</p>
+    </footer>
+  </div>
+
+  <script>
+    const statusFilter = document.getElementById('statusFilter');
+    const rows = document.querySelectorAll('.review-row');
+
+    statusFilter.addEventListener('change', (e) => {
+      const selected = e.target.value;
+      rows.forEach(row => {
+        const rowStatus = row.getAttribute('data-status');
+        if (selected === 'all' || rowStatus === selected) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    });
+
+    let sortDirections = [true, true, true, true, true];
+
+    function sortTable(columnIndex) {
+      const table = document.getElementById("reviewsTable");
+      const tbody = table.querySelector("tbody");
+      const rowsArray = Array.from(tbody.querySelectorAll("tr.review-row"));
+      if (rowsArray.length === 0) return;
+
+      const direction = sortDirections[columnIndex] ? 1 : -1;
+      sortDirections[columnIndex] = !sortDirections[columnIndex];
+
+      rowsArray.sort((a, b) => {
+        let cellA, cellB;
+
+        if (columnIndex === 4) {
+          // Sort by timestamp
+          cellA = parseFloat(a.cells[columnIndex].getAttribute('data-date')) || 0;
+          cellB = parseFloat(b.cells[columnIndex].getAttribute('data-date')) || 0;
+          return (cellA - cellB) * direction;
+        } else {
+          cellA = a.cells[columnIndex].innerText.trim().toLowerCase();
+          cellB = b.cells[columnIndex].innerText.trim().toLowerCase();
+          if (cellA < cellB) return -1 * direction;
+          if (cellA > cellB) return 1 * direction;
+          return 0;
+        }
+      });
+
+      rowsArray.forEach(row => tbody.appendChild(row));
+    }
+  </script>
+</body>
+</html>

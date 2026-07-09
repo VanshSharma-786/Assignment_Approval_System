@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>All Users | University Assignment Approval</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="admin-layout">
+    <header class="admin-header-bar">
+      <a href="/admin/dashboard" class="admin-logo-title" style="color: inherit;">Admin Dashboard</a>
+      <div class="navbar-menu" style="margin: 0;">
+        <div class="user-profile">
+          <div class="user-avatar" id="avatar-display">
+            <%= user.email.charAt(0).toUpperCase() %>
+          </div>
+          <span><%= user.email %></span>
+        </div>
+        <form action="/auth/logout" method="GET" style="margin: 0;">
+          <button type="submit" class="btn-logout" id="logout-btn">Sign Out</button>
+        </form>
+      </div>
+    </header>
+
+    <div class="admin-container">
+      <aside class="admin-sidebar">
+        <h2 class="sidebar-title">Navigation</h2>
+        <nav class="sidebar-menu">
+          <a href="/admin/departments" class="sidebar-link">Departments</a>
+          <a href="/admin/users" class="sidebar-link" style="background-color: var(--primary); color: var(--text-inverse);">Users</a>
+          <a href="/admin/users/add" class="sidebar-link">Add User</a>
+        </nav>
+      </aside>
+
+      <main class="admin-content">
+        <header class="dashboard-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+          <div>
+            <h2 class="dashboard-title" style="font-size: 22px; margin-bottom: 4px;">All Users</h2>
+          </div>
+          <a href="/admin/users/add" class="btn-header-action">
+            Add User
+          </a>
+        </header>
+
+        <% if (success) { %>
+          <div class="alert alert-success" role="alert" id="success-banner">
+            <span class="alert-icon" style="background: currentColor;">✓</span>
+            <span><%= success %></span>
+          </div>
+        <% } %>
+
+        <% if (error) { %>
+          <div class="alert alert-danger" role="alert" id="error-banner">
+            <span class="alert-icon">!</span>
+            <span><%= error %></span>
+          </div>
+        <% } %>
+
+        <div class="filter-bar">
+          <div class="filter-group">
+            <label for="search-input" class="form-label">Search</label>
+            <input 
+              type="text" 
+              id="search-input" 
+              class="form-input" 
+              placeholder="Search by name or email"
+            >
+          </div>
+          <div class="filter-group">
+            <label for="role-filter" class="form-label">Role</label>
+            <div class="input-wrapper">
+              <select id="role-filter" class="form-input form-select">
+                <option value="all">All Roles</option>
+                <option value="student">Student</option>
+                <option value="professor">Professor</option>
+                <option value="hod">HOD</option>
+              </select>
+            </div>
+          </div>
+          <div class="filter-group">
+            <label for="dept-filter" class="form-label">Department</label>
+            <div class="input-wrapper">
+              <select id="dept-filter" class="form-input form-select">
+                <option value="all">All Departments</option>
+                <% departments.forEach(dept => { %>
+                  <option value="<%= dept.id %>"><%= dept.name %></option>
+                <% }); %>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Department</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="table-body">
+              <% if (users.length === 0) { %>
+                <tr id="empty-row">
+                  <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 32px;">
+                    No users created yet.
+                  </td>
+                </tr>
+              <% } else { %>
+                <% users.forEach(u => { %>
+                  <tr 
+                    class="user-row" 
+                    data-name="<%= u.name || '' %>" 
+                    data-email="<%= u.email %>" 
+                    data-role="<%= u.role %>" 
+                    data-dept-id="<%= u.departmentId || '' %>"
+                  >
+                    <td style="font-weight: 600;"><%= u.name || 'N/A' %></td>
+                    <td><%= u.email %></td>
+                    <td>
+                      <% if (u.role === 'admin') { %>
+                        <span class="badge badge-success">Admin</span>
+                      <% } else if (u.role === 'hod') { %>
+                        <span class="badge badge-warning">HOD</span>
+                      <% } else if (u.role === 'professor') { %>
+                        <span class="badge badge-info">Professor</span>
+                      <% } else { %>
+                        <span class="badge badge-info" style="background-color: hsla(280, 100%, 75%, 0.1); color: hsl(280, 100%, 70%);">Student</span>
+                      <% } %>
+                    </td>
+                    <td><%= u.department ? u.department.name : 'N/A' %></td>
+                    <td>
+                      <% if (u.role !== 'admin') { %>
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                          <a href="/admin/users/edit/<%= u.id %>" class="btn-table-edit">Edit</a>
+                          <form action="/admin/users/delete/<%= u.id %>" method="POST" style="margin: 0;" onsubmit="return confirm('Are you sure you want to delete this user?');">
+                            <button type="submit" class="btn-table-delete">Delete</button>
+                          </form>
+                        </div>
+                      <% } else { %>
+                        <span style="font-size: 13px; color: var(--text-muted); font-style: italic;">Protected</span>
+                      <% } %>
+                    </td>
+                  </tr>
+                <% }); %>
+              <% } %>
+              <tr id="no-results-row" style="display: none;">
+                <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 32px;">
+                  No users match your filters.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="pagination-container">
+            <span class="pagination-info" id="page-info">Page 1 of 1</span>
+            <div class="pagination-buttons">
+              <button class="btn-pagination" id="prev-btn" disabled>Previous</button>
+              <button class="btn-pagination" id="next-btn" disabled>Next</button>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <footer class="admin-footer">
+      <p>&copy; 2025 Admin Dashboard. All rights reserved.</p>
+    </footer>
+  </div>
+
+  <script src="/scripts/users-list.js"></script>
+</body>
+</html>

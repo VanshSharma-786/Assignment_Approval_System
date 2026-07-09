@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload Assignment | Student Portal</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="admin-layout">
+    <header class="admin-header-bar">
+      <a href="/student/dashboard" class="admin-logo-title" style="color: inherit;">Student Portal</a>
+      <div class="navbar-menu" style="margin: 0;">
+        <div class="user-profile">
+          <div class="user-avatar" id="avatar-display">
+            <%= user.name.charAt(0).toUpperCase() %>
+          </div>
+          <span><%= user.email %></span>
+        </div>
+        <form action="/auth/logout" method="GET" style="margin: 0;">
+          <button type="submit" class="btn-logout" id="logout-btn">Sign Out</button>
+        </form>
+      </div>
+    </header>
+
+    <div class="admin-container">
+      <aside class="admin-sidebar">
+        <h2 class="sidebar-title">Navigation</h2>
+        <nav class="sidebar-menu">
+          <a href="/student/dashboard" class="sidebar-link">Dashboard</a>
+          <a href="/student/assignments" class="sidebar-link">All Assignments</a>
+          <a href="/student/profile" class="sidebar-link">Profile</a>
+        </nav>
+      </aside>
+
+      <main class="admin-content">
+        <header class="dashboard-header" style="margin-bottom: 24px;">
+          <h2 class="dashboard-title" style="font-size: 22px;">Upload Assignment</h2>
+        </header>
+
+        <% if (error) { %>
+          <div class="alert alert-danger" style="margin-bottom: 24px; padding: 12px 16px; background-color: hsla(0, 80%, 95%, 0.9); border-left: 4px solid hsl(0, 80%, 50%); color: hsl(0, 80%, 30%); border-radius: var(--radius-sm);">
+            <strong>Error:</strong> <%= error %>
+          </div>
+        <% } %>
+
+        <div class="form-container" style="background-color: var(--card-bg); padding: 32px; border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); border: 1px solid var(--border-color); max-width: 700px;">
+          <form action="/student/assignments/upload" method="POST" enctype="multipart/form-data">
+            <div class="form-group" style="margin-bottom: 20px;">
+              <label for="title" class="form-label" style="display: block; font-weight: 600; margin-bottom: 8px; color: var(--text-main);">Assignment Title</label>
+              <input type="text" id="title" name="title" class="form-input" style="width: 100%;" placeholder="e.g. Operating Systems Case Study" required>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 20px;">
+              <label for="category" class="form-label" style="display: block; font-weight: 600; margin-bottom: 8px; color: var(--text-main);">Category</label>
+              <select id="category" name="category" class="form-select" style="width: 100%;" required>
+                <option value="" disabled selected>Select category...</option>
+                <option value="Assignment">Assignment</option>
+                <option value="Thesis">Thesis</option>
+                <option value="Report">Report</option>
+              </select>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 20px;">
+              <label for="description" class="form-label" style="display: block; font-weight: 600; margin-bottom: 8px; color: var(--text-main);">Description</label>
+              <textarea id="description" name="description" class="form-textarea" style="width: 100%; height: 120px;" placeholder="Provide brief notes or overview details..."></textarea>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 32px;">
+              <label for="assignmentFile" class="form-label" style="display: block; font-weight: 600; margin-bottom: 8px; color: var(--text-main);">Upload Document (PDF Only, Max 10MB)</label>
+              <input type="file" id="assignmentFile" name="assignmentFile" class="form-input" style="width: 100%; padding: 8px 12px; background-color: var(--bg-main);" accept=".pdf" required>
+            </div>
+
+            <div class="form-actions" style="display: flex; gap: 16px; align-items: center;">
+              <button type="submit" class="btn-upload">Upload Draft</button>
+              <a href="/student/dashboard" style="color: var(--text-muted); text-decoration: none; font-weight: 600; font-size: 14px;">Cancel</a>
+            </div>
+          </form>
+        </div>
+      </main>
+    </div>
+
+    <footer class="admin-footer">
+      <p>&copy; 2025 Student Portal. All rights reserved.</p>
+    </footer>
+  </div>
+</body>
+</html>

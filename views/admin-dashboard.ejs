@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | University Assignment Approval</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="admin-layout">
+    <header class="admin-header-bar">
+      <h1 class="admin-logo-title">Admin Dashboard</h1>
+      <div class="navbar-menu" style="margin: 0;">
+        <div class="user-profile">
+          <div class="user-avatar" id="avatar-display">
+            <%= user.email.charAt(0).toUpperCase() %>
+          </div>
+          <span><%= user.email %></span>
+        </div>
+        <form action="/auth/logout" method="GET" style="margin: 0;">
+          <button type="submit" class="btn-logout" id="logout-btn">Sign Out</button>
+        </form>
+      </div>
+    </header>
+
+    <div class="admin-container">
+      <aside class="admin-sidebar">
+        <h2 class="sidebar-title">Navigation</h2>
+        <nav class="sidebar-menu">
+          <a href="/admin/departments" class="sidebar-link">Departments</a>
+          <a href="/admin/users" class="sidebar-link">Users</a>
+          <a href="/admin/users/add" class="sidebar-link">Add User</a>
+        </nav>
+      </aside>
+
+      <main class="admin-content">
+        <header class="dashboard-header">
+          <h2 class="dashboard-title" style="font-size: 22px; margin-bottom: 24px;">Dashboard Overview</h2>
+        </header>
+
+        <section class="metrics-grid">
+          <div class="metric-card card-blue">
+            <div class="metric-label" style="color: hsl(210, 50%, 30%);">Total Departments</div>
+            <div class="metric-value" style="color: hsl(210, 80%, 20%);"><%= counts.departments %></div>
+          </div>
+          
+          <div class="metric-card card-green">
+            <div class="metric-label" style="color: hsl(120, 50%, 30%);">Total Students</div>
+            <div class="metric-value" style="color: hsl(120, 80%, 20%);"><%= counts.students %></div>
+          </div>
+          
+          <div class="metric-card card-orange">
+            <div class="metric-label" style="color: hsl(24, 50%, 30%);">Total Professors</div>
+            <div class="metric-value" style="color: hsl(24, 80%, 20%);"><%= counts.professors %></div>
+          </div>
+          
+          <div class="metric-card card-purple">
+            <div class="metric-label" style="color: hsl(270, 50%, 30%);">Total HODs</div>
+            <div class="metric-value" style="color: hsl(270, 80%, 20%);"><%= counts.hods %></div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <footer class="admin-footer">
+      <p>&copy; 2025 Admin Dashboard. All rights reserved.</p>
+    </footer>
+  </div>
+</body>
+</html>

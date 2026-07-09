@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assignment Details | Student Portal</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="admin-layout">
+    <header class="admin-header-bar">
+      <% if (user.role === 'student') { %>
+        <a href="/student/dashboard" class="admin-logo-title" style="color: inherit;">Student Portal</a>
+      <% } else if (user.role === 'professor') { %>
+        <a href="/professor/dashboard" class="admin-logo-title" style="color: inherit;">Professor Portal</a>
+      <% } %>
+      <div class="navbar-menu" style="margin: 0;">
+        <div class="user-profile">
+          <div class="user-avatar" id="avatar-display">
+            <%= user.role === 'professor' ? 'P' : (user.role === 'hod' ? 'H' : user.name.charAt(0).toUpperCase()) %>
+          </div>
+          <span><%= user.email %></span>
+        </div>
+        <form action="/auth/logout" method="GET" style="margin: 0;">
+          <button type="submit" class="btn-logout" id="logout-btn">Sign Out</button>
+        </form>
+      </div>
+    </header>
+
+    <div class="admin-container">
+      <aside class="admin-sidebar">
+        <h2 class="sidebar-title">Navigation</h2>
+        <nav class="sidebar-menu">
+          <% if (user.role === 'student') { %>
+            <a href="/student/dashboard" class="sidebar-link">Dashboard</a>
+            <a href="/student/assignments" class="sidebar-link" style="background-color: var(--primary); color: var(--text-inverse);">All Assignments</a>
+            <a href="/student/profile" class="sidebar-link">Profile</a>
+          <% } else if (user.role === 'professor') { %>
+            <a href="/professor/dashboard" class="sidebar-link" style="background-color: var(--primary); color: var(--text-inverse);">Dashboard</a>
+            <a href="/professor/reviews" class="sidebar-link">My Reviews</a>
+            <a href="/professor/profile" class="sidebar-link">Profile</a>
+          <% } %>
+        </nav>
+      </aside>
+
+      <main class="admin-content">
+        <% if (user.role === 'student') { %>
+          <a href="/student/assignments" class="btn-secondary-outline" style="display: inline-flex; align-items: center; gap: 8px; margin-bottom: 24px; max-width: fit-content;">
+            &larr; Back to Assignments
+          </a>
+        <% } else if (user.role === 'professor') { %>
+          <a href="/professor/dashboard" class="btn-secondary-outline" style="display: inline-flex; align-items: center; gap: 8px; margin-bottom: 24px; max-width: fit-content;">
+            &larr; Back to Dashboard
+          </a>
+        <% } %>
+
+        <% if (successMessage) { %>
+          <div class="alert alert-success" style="margin-bottom: 24px; padding: 12px 16px; background-color: hsla(150, 80%, 95%, 0.9); border-left: 4px solid hsl(150, 80%, 40%); color: hsl(150, 80%, 25%); border-radius: var(--radius-sm);">
+            <strong>Success:</strong> <%= successMessage %>
+          </div>
+        <% } %>
+
+        <div class="timeline-card" style="margin-top: 0;">
+          <h2 style="font-size: 22px; margin-bottom: 12px; color: var(--text-main); font-weight: 700;"><%= assignment.title %></h2>
+          <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 16px; line-height: 1.5;">
+            <strong>Description:</strong> <%= assignment.description || 'No description provided.' %>
+          </p>
+          <p style="font-size: 14px; margin-bottom: 16px; color: var(--text-main);">
+            <strong>File:</strong> 
+            <a href="/student/assignments/<%= assignment.id %>/download" style="font-weight: 600; text-decoration: underline; color: var(--primary);">
+              <%= assignment.filePath ? assignment.filePath.split(/[\\/]/).pop() : 'Attachment' %>
+            </a>
+          </p>
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <span style="font-size: 14px; color: var(--text-muted); font-weight: 600;">Current Status:</span>
+            <span class="badge badge-<%= assignment.status.toLowerCase() %>" style="display: inline-flex; justify-content: center; width: 90px; text-align: center;"><%= assignment.status %></span>
+          </div>
+        </div>
+
+        <div class="timeline-card">
+          <h3 class="timeline-title">Approval History</h3>
+          <% if (history && history.length > 0) { %>
+            <ul class="timeline">
+              <% history.forEach(entry => { %>
+                <li class="timeline-item">
+                  <div class="timeline-marker"></div>
+                  <div class="timeline-content">
+                    <div class="timeline-header">
+                      <span class="timeline-status" style="color: var(--text-main); font-weight: 700;"><%= entry.status %></span> by <%= entry.reviewerName %>, <%= entry.date %>
+                    </div>
+                    <div class="timeline-remark" style="font-size: 14px; color: var(--text-muted); margin-top: 4px;"><%= entry.remark %></div>
+                    <% if (entry.filePath) { %>
+                      <div style="margin-top: 6px; font-size: 13px; color: var(--text-muted);">
+                        File Revision: <a href="/student/assignments/<%= assignment.id %>/download?version=<%= encodeURIComponent(entry.filePath) %>" style="text-decoration: underline; color: var(--primary);"><%= entry.filePath.split(/[\\/]/).pop() %></a>
+                      </div>
+                    <% } %>
+                    <% if (entry.signature) { %>
+                      <div class="timeline-signature" style="font-size: 12px; font-style: italic; color: var(--text-muted); margin-top: 4px; display: flex; align-items: center; gap: 8px;">
+                        <span>Signature:</span>
+                        <% if (entry.signature.startsWith('/uploads')) { %>
+                          <img src="<%= entry.signature %>" alt="Digital Signature" style="max-height: 36px; max-width: 150px; background: transparent; border-radius: var(--radius-sm); border: 1px solid var(--border-color); padding: 2px;">
+                        <% } else { %>
+                          <span><%= entry.signature %></span>
+                        <% } %>
+                      </div>
+                    <% } %>
+                  </div>
+                </li>
+              <% }); %>
+            </ul>
+          <% } else { %>
+            <p style="color: var(--text-muted); font-size: 14px;">No approval history records found.</p>
+          <% } %>
+        </div>
+
+        <% if (assignment.status.toLowerCase() !== 'draft' && assignment.reviewer) { %>
+          <div style="margin-top: 24px; padding: 16px; background-color: hsla(150, 30%, 95%, 0.4); border-left: 4px solid var(--success-text); border-radius: var(--radius-sm); color: var(--success-text); font-size: 14px; line-height: 1.5;">
+            <strong>Current Reviewer:</strong> <%= assignment.reviewer.name %> (<%= assignment.reviewer.role.toUpperCase() %>, <%= assignment.reviewer.department ? assignment.reviewer.department.name : 'University' %>)
+          </div>
+        <% } %>
+
+        <% if (assignment.status.toLowerCase() === 'draft') { %>
+          <div class="timeline-card">
+            <h3 class="timeline-title" style="color: var(--primary);">Submit for Review</h3>
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px; margin-top: 4px;">Select a professor belonging to your department to assign as reviewer.</p>
+            <form id="detailsSubmitForm" action="/student/assignments/<%= assignment.id %>/submit" method="POST">
+              <select name="reviewerId" id="detailsReviewerSelect" class="form-select" style="width: 100%; height: 38px; margin-bottom: 16px;" required>
+                <option value="" disabled selected>Select professor...</option>
+                <% professors.forEach(p => { %>
+                  <option value="<%= p.id %>"><%= p.name %> (<%= p.email %>)</option>
+                <% }); %>
+              </select>
+              <button type="submit" class="btn-upload" style="width: 100%;">Submit Assignment</button>
+            </form>
+          </div>
+        <% } %>
+
+        <% if (assignment.status.toLowerCase() === 'rejected') { %>
+          <div class="timeline-card">
+            <h3 class="timeline-title" style="color: var(--primary);">Resubmit Assignment</h3>
+            <% if (resubmitError) { %>
+              <div class="alert alert-danger" style="margin-bottom: 16px; padding: 12px 16px; background-color: var(--error-bg); border-left: 4px solid var(--error-text); color: var(--error-text); border-radius: var(--radius-sm); font-size: 14px;">
+                <strong>Error:</strong> <%= resubmitError %>
+              </div>
+            <% } %>
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px; margin-top: 4px;">Update details and submit revision back to the original reviewer.</p>
+            <form id="resubmitForm" action="/student/assignments/<%= assignment.id %>/resubmit" method="POST" enctype="multipart/form-data">
+              <div style="margin-bottom: 16px;">
+                <label for="resubmitDescription" style="display: block; font-size: 13px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px;">Update Description / Remarks</label>
+                <textarea id="resubmitDescription" name="description" class="form-textarea" style="width: 100%; min-height: 80px;" placeholder="Add resubmission comments..."><%= assignment.description %></textarea>
+              </div>
+              <div style="margin-bottom: 20px;">
+                <label for="resubmitFile" style="display: block; font-size: 13px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px;">Upload New PDF File (Optional)</label>
+                <input type="file" id="resubmitFile" name="assignmentFile" accept=".pdf" class="form-control" style="width: 100%; padding: 8px;">
+                <p style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Leave empty to keep the original file (<%= assignment.filePath ? assignment.filePath.split(/[\\/]/).pop() : 'Attachment' %>).</p>
+              </div>
+              <button type="submit" class="btn-upload" style="width: 100%;">Resubmit Revision</button>
+            </form>
+          </div>
+        <% } %>
+      </main>
+    </div>
+
+    <footer class="admin-footer">
+      <p>&copy; 2025 <%= user.role === 'professor' ? 'Professor Portal' : 'Student Portal' %>. All rights reserved.</p>
+    </footer>
+  </div>
+
+  <script src="/scripts/assignment-details.js"></script>
+</body>
+</html>

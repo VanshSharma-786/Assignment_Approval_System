@@ -1,6 +1,7 @@
 const { Sequelize } = require('sequelize');
 const path = require('path');
 const fs = require('fs');
+const sqlite3 = require('sqlite3');
 require('dotenv').config();
 
 const isVercel = !!process.env.VERCEL;
@@ -19,8 +20,10 @@ if (isVercel) {
 const sequelize = new Sequelize({
   dialect: 'sqlite',
   storage: databasePath,
-  logging: false
+  logging: false,
+  dialectModule: sqlite3
 });
+
 
 const connectDB = async () => {
   try {

@@ -5,7 +5,7 @@ const Department = require('../models/Department');
 const Assignment = require('../models/Assignment');
 const { sequelize } = require('../config/db');
 const { Op } = require('sequelize');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 
 const isAdmin = (req, res, next) => {
   if (req.session && req.session.user && req.session.user.role === 'admin') {

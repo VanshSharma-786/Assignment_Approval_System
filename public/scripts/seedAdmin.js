@@ -3,7 +3,7 @@ const User = require('../../models/User');
 const Department = require('../../models/Department');
 const Assignment = require('../../models/Assignment');
 const Notification = require('../../models/Notification');
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcrypt');
 require('dotenv').config({ override: true });
 
 const seedAdmin = async () => {
@@ -12,7 +12,7 @@ const seedAdmin = async () => {
     let adminPassword = process.env.ADMIN_PASSWORD || 'Admin@123';
     let studentEmail = process.env.STUDENT_EMAIL || 'student1@university.edu';
     let studentPassword = process.env.STUDENT_PASSWORD || 'StudentPassword123';
-    
+
     let professorEmail = 'professor@university.edu';
     let professorPassword = 'Professor@123';
     let hodEmail = 'hod@university.edu';

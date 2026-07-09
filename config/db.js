@@ -36,7 +36,7 @@ const connectDB = async () => {
     if (userCount === 0) {
       console.log('Database is empty. Running automatic self-seed...');
       const Department = require('../models/Department');
-      const bcrypt = require('bcrypt');
+      const bcrypt = require('bcryptjs');
 
       const saltRounds = 10;
       const hashedAdminPassword = await bcrypt.hash('Admin@123', saltRounds);

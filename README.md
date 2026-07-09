@@ -1,4 +1,4 @@
-University Assignment Approval System
+# University Assignment Approval System
 
 **University Assignment Approval & Tracking Platform** built with **Node.js, Express, EJS, and SQLite (via Sequelize)**. It facilitates a smooth digital workflow for submitting, reviewing, forwarding, and signing academic assignments, catering to four distinct roles: Students, Professors, HODs, and Administrators.
 
